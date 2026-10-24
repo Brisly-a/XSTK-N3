@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Math Buddy – Học toán cùng AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f7f6;--card:#fff;--ink:#16302f;--mute:#5d7573;--line:#d5e3e1;--pri:#0f8b8d;--pri-d:#0a6b6d;--acc:#f2a900;--bad:#c0392b;--ok:#2e8b57;--r:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1c1c;--card:#172a2a;--ink:#e6f2f0;--mute:#9bb5b2;--line:#264240;--pri:#2cb5b7;--pri-d:#4fd0d2;--acc:#ffc233}}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 "Be Vietnam Pro",system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+.wrap{max-width:560px;margin:0 auto;padding:20px 16px 40px}
+.screen{display:none}.screen.on{display:block}
+h1{font-size:28px;margin:8px 0 4px;font-weight:800}h2{font-size:20px;margin:0 0 6px}
+p.sub{color:var(--mute);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:14px}
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 6px}
+input,select{width:100%;padding:13px 14px;font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:10px}
+input:focus,select:focus,button:focus-visible{outline:3px solid var(--acc);outline-offset:1px}
+button{font:inherit;font-weight:700;cursor:pointer;border:0;border-radius:10px;padding:13px 18px;min-height:48px}
+.btn{background:var(--pri);color:#fff;width:100%;margin-top:14px}.btn:hover{background:var(--pri-d)}
+.btn2{background:transparent;color:var(--pri);border:2px solid var(--pri);width:100%;margin-top:10px}
+.back{background:var(--card);border:2px solid var(--line);color:var(--ink);padding:8px 14px;min-height:42px;margin-bottom:10px}
+.msg{min-height:22px;margin-top:10px;font-size:14px}.msg.err{color:var(--bad)}.msg.ok{color:var(--ok)}
+.tabs{display:flex;gap:6px;margin-bottom:6px}.tabs button{flex:1;background:var(--bg);color:var(--mute);border:2px solid var(--line)}
+.tabs button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{background:var(--card);border:2px solid var(--line);border-radius:var(--r);padding:18px 12px;text-align:center;color:var(--ink);min-height:112px}
+.tile b{display:block;font-size:30px;line-height:1.2}.tile span{font-size:14px;font-weight:700}
+.tile small{display:block;color:var(--mute);font-weight:400;font-size:12px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.top button{background:none;color:var(--mute);padding:8px;min-height:40px}
+.bub{padding:10px 14px;border-radius:14px;margin:8px 0;max-width:92%;word-wrap:break-word}
+.bub.me{background:var(--pri);color:#fff;margin-left:auto}.bub.bot{background:var(--card);border:1px solid var(--line)}
+#chat{height:calc(100vh - 250px);min-height:280px;overflow-y:auto;padding:4px}
+.bar{display:flex;gap:6px;align-items:flex-end;position:sticky;bottom:0;background:var(--bg);padding-top:8px}
+.bar textarea{flex:1;font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:10px;padding:10px;resize:none;height:48px}
+.ib{background:var(--card);border:2px solid var(--line);color:var(--ink);width:48px;padding:0;font-size:20px}
+.ib.on{background:var(--acc);border-color:var(--acc);color:#000}
+.mini{background:var(--bg);border:1px solid var(--line);color:var(--ink);min-height:34px;padding:4px 10px;font-size:13px;margin-top:6px}
+.shot{max-width:100%;border-radius:8px}
+.post{display:block;width:100%;text-align:left;background:var(--card);border:2px solid var(--line);color:var(--ink);margin-bottom:8px;font-weight:400}
+.post b{display:block}.post small{color:var(--mute)}
+textarea.big{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:12px;min-height:120px}
+.av{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;vertical-align:middle}
+.avpick{background:none;border:3px solid transparent;border-radius:50%;padding:2px;min-height:0}.avpick.on{border-color:var(--acc)}
+#av-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;justify-items:center}
+#g-dice{display:flex;align-items:center;justify-content:center;gap:14px;min-height:110px}.opx{font-size:34px}
+#g-dice.roll .die{animation:shake .16s infinite}
+@keyframes shake{25%{transform:rotate(-14deg) translateY(-4px)}75%{transform:rotate(14deg) translateY(2px)}}
+@media(prefers-reduced-motion:reduce){#g-dice.roll .die{animation:none}}
+#g-q{text-align:center;font-size:26px;font-weight:800;margin:8px 0}
+#g-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{background:var(--card);border:3px solid var(--line);color:var(--ink);font-size:24px;min-height:64px}
+.opt.good{background:var(--ok);border-color:var(--ok);color:#fff}.opt.bad{background:var(--bad);border-color:var(--bad);color:#fff}
+.race{display:flex;align-items:center;gap:8px;margin:6px 0}.track{flex:1;height:14px;border-radius:7px;background:var(--line);overflow:hidden}.track i{display:block;height:100%;width:0;transition:width .5s}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}.stats div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 4px;text-align:center}
+.stats b{display:block;font-size:22px;color:var(--pri)}.stats span{font-size:11px;color:var(--mute)}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<section id="s-key" class="screen on">
+  <h1>Math Buddy</h1>
+  <p class="sub">Bạn đồng hành học toán, trả lời bằng tiếng Việt.</p>
+  <div class="card">
+    <h2>Nhập khóa API của bạn</h2>
+    <p class="sub">Lấy khóa miễn phí tại <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>. Khóa chỉ lưu trên thiết bị của bạn.</p>
+    <label for="apikey">Khóa API</label>
+    <input id="apikey" type="password" placeholder="AIza..." autocomplete="off">
+    <button class="btn" id="btn-key">Kiểm tra và tải danh sách model</button>
+    <div class="msg" id="m-key"></div>
+  </div>
+</section>
+
+<section id="s-model" class="screen">
+  <button class="back" data-go="s-key">← Quay lại</button>
+  <h1>Chọn model AI</h1>
+  <p class="sub">Chọn model phù hợp với bạn. Có thể đổi lại sau.</p>
+  <div class="card">
+    <label for="model">Model</label>
+    <select id="model"></select>
+    <button class="btn2" id="btn-test">Thử model này</button>
+    <div class="msg" id="m-model"></div>
+    <button class="btn" id="btn-model">Dùng model này</button>
+  </div>
+</section>
+
+<section id="s-auth" class="screen">
+  <button class="back" data-go="s-model">← Quay lại</button>
+  <h1>Chào bạn!</h1>
+  <p class="sub">Đăng nhập để vào diễn đàn và lưu kết quả học.</p>
+  <div class="card">
+    <div class="tabs"><button class="on" id="t-in">Đăng nhập</button><button id="t-up">Đăng ký</button></div>
+    <div id="f-name" style="display:none"><label for="name">Tên hiển thị</label><input id="name" placeholder="Ví dụ: Minh Anh"></div>
+    <label for="email">Email</label><input id="email" type="email" autocomplete="email">
+    <label for="pass">Mật khẩu (ít nhất 6 ký tự)</label><input id="pass" type="password" autocomplete="current-password">
+    <button class="btn" id="btn-auth">Đăng nhập</button>
+    <div class="msg" id="m-auth"></div>
+  </div>
+</section>
+
+<section id="s-home" class="screen">
+  <div class="top"><h1 id="hello" style="font-size:22px">Xin chào!</h1><button id="btn-out">Đăng xuất</button></div>
+  <p class="sub">Chọn một mục để bắt đầu.</p>
+  <div class="grid">
+    <button class="tile" data-go="s-buddy"><b>🤖</b><span>AI Buddy</span><small>Chat, chụp đề, phép tính</small></button>
+    <button class="tile" data-go="s-games"><b>🎲</b><span>Trò chơi</span><small>Xúc xắc, thử thách</small></button>
+    <button class="tile" data-go="s-review" id="open-rv"><b>📊</b><span>Ôn tập</span><small>Biểu đồ tiến bộ</small></button>
+    <button class="tile" data-go="s-forum" id="open-forum"><b>💬</b><span>Diễn đàn</span><small>Hỏi đáp cùng bạn bè</small></button>
+  </div>
+  <div class="msg" id="m-home"></div>
+  <button class="btn2" data-go="s-model">Đổi model AI</button>
+</section>
+
+<section id="s-buddy" class="screen">
+  <div class="top"><button class="back" data-go="s-home" style="margin:0">← Quay lại</button><button id="b-stop">🔇 Dừng đọc</button></div>
+  <div id="chat"></div>
+  <input type="file" id="b-file" accept="image/*" capture="environment" hidden>
+  <div class="bar">
+    <button class="ib" id="b-cam" title="Chụp hoặc chọn ảnh đề">📷</button>
+    <button class="ib" id="b-mic" title="Nói để nhập">🎤</button>
+    <button class="ib" id="b-calc" title="Chế độ tính nhanh">=</button>
+    <textarea id="b-in" placeholder="Hỏi bài toán hoặc dán đề..."></textarea>
+    <button class="ib" id="b-send" title="Gửi" style="background:var(--pri);color:#fff">➤</button>
+  </div>
+</section>
+
+<section id="s-forum" class="screen">
+  <button class="back" data-go="s-home">← Quay lại</button>
+  <h1>Diễn đàn</h1><p class="sub">Hỏi đáp và chia sẻ cách giải cùng các bạn.</p>
+  <button class="btn" id="f-new" style="margin:0 0 12px">+ Đặt câu hỏi mới</button>
+  <div id="f-list"></div>
+</section>
+<section id="s-newpost" class="screen">
+  <button class="back" data-go="s-forum">← Quay lại</button><h1>Câu hỏi mới</h1>
+  <div class="card"><label for="n-title">Tiêu đề</label><input id="n-title" maxlength="120">
+  <label for="n-body">Nội dung</label><textarea class="big" id="n-body"></textarea>
+  <button class="btn" id="n-send">Đăng bài</button><div class="msg" id="m-new"></div></div>
+</section>
+<section id="s-post" class="screen">
+  <button class="back" data-go="s-forum">← Quay lại</button>
+  <div class="card" id="p-body"></div><div id="c-list"></div>
+  <label for="c-in">Trả lời</label><textarea class="big" id="c-in" style="min-height:70px"></textarea>
+  <button class="btn" id="c-send">Gửi trả lời</button>
+</section>
+
+<section id="s-avatar" class="screen">
+  <button class="back" data-go="s-home">← Quay lại</button><h1>Chọn avatar</h1><p class="sub">Bấm vào hình bạn thích, hệ thống tự lưu.</p>
+  <div class="card"><div id="av-grid"></div></div>
+</section>
+<section id="s-games" class="screen">
+  <button class="back" data-go="s-home">← Quay lại</button><h1>Trò chơi xúc xắc</h1>
+  <p class="sub">Gieo xúc xắc, tính nhanh để chạy đua với Cú Mèo. Mỗi ván có 10 câu.</p>
+  <div class="grid">
+    <button class="tile" data-topic="Cộng"><b>＋</b><span>Phép cộng</span></button>
+    <button class="tile" data-topic="Trừ"><b>−</b><span>Phép trừ</span></button>
+    <button class="tile" data-topic="Nhân"><b>×</b><span>Phép nhân</span></button>
+    <button class="tile" data-topic="Chia"><b>÷</b><span>Phép chia</span></button>
+    <button class="tile" data-topic="Hỗn hợp"><b>🎲</b><span>Hỗn hợp</span><small>4 phép tính</small></button>
+    <button class="tile" data-topic="Thử thách" style="grid-column:1/-1"><b>🎲🎲🎲</b><span>Thử thách</span><small>3 xúc xắc: a + b × c, a − b × c</small></button>
+  </div>
+</section>
+<section id="s-play" class="screen">
+  <button class="back" data-go="s-games">← Quay lại</button>
+  <div id="g-main">
+    <div class="card">
+      <div class="race"><span id="g-me"></span><div class="track"><i id="g-fme" style="background:var(--pri)"></i></div></div>
+      <div class="race"><span id="g-bot"></span><div class="track"><i id="g-fbot" style="background:var(--acc)"></i></div></div>
+      <p class="sub" id="g-info" style="margin:6px 0 0;font-size:13px"></p>
+    </div>
+    <div id="g-dice"></div><div id="g-q"></div><div id="g-opts"></div>
+  </div>
+  <div id="g-end" class="card" style="display:none"><div id="g-res"></div>
+    <button class="btn" id="g-again">Chơi lại</button><button class="btn2" data-go="s-games">Chọn chủ đề khác</button><button class="btn2" id="g-rv">Xem biểu đồ Ôn tập</button></div>
+</section>
+<section id="s-review" class="screen">
+  <button class="back" data-go="s-home">← Quay lại</button><h1>Ôn tập</h1><p class="sub">Theo dõi tiến bộ của bạn qua từng ván chơi.</p>
+  <div id="rv-body"></div>
+</section>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mathjs@12.4.2/lib/browser/math.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+const sb=supabase.createClient(APP_CONFIG.SUPABASE_URL,APP_CONFIG.SUPABASE_KEY);
+const state={key:store.get('mb_key')||'',model:store.get('mb_model')||''};
+const say=(id,t,cls='')=>{$(id).textContent=t;$(id).className='msg '+cls};
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));window.scrollTo(0,0)}
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+document.querySelectorAll('[data-soon]').forEach(b=>b.onclick=()=>say('m-home','Mục này sẽ được thêm ở bước tiếp theo.'));
+
+// ---- Bước 1: API key + danh sách model
+async function loadModels(key){
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key='+encodeURIComponent(key));
+  const j=await r.json();
+  if(!r.ok)throw new Error(j.error&&j.error.message||'Khóa không hợp lệ');
+  return j.models.filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')&&/gemini/i.test(m.name)).map(m=>m.name.replace('models/',''));
+}
+$('btn-key').onclick=async()=>{
+  const k=$('apikey').value.trim();if(!k)return say('m-key','Hãy dán khóa API vào ô trên.','err');
+  say('m-key','Đang kiểm tra...');
+  try{
+    const list=await loadModels(k);if(!list.length)throw new Error('Không có model phù hợp cho khóa này.');
+    state.key=k;store.set('mb_key',k);
+    list.sort((a,b)=>(/flash/.test(b)-/flash/.test(a))||b.localeCompare(a));
+    $('model').innerHTML=list.map(m=>`<option>${m}</option>`).join('');
+    if(list.includes(state.model))$('model').value=state.model;
+    say('m-key','');go('s-model');
+  }catch(e){say('m-key','Lỗi: '+e.message,'err')}
+};
+$('btn-test').onclick=async()=>{
+  say('m-model','Đang thử...');
+  try{
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${$('model').value}:generateContent?key=${encodeURIComponent(state.key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'2+3 bằng mấy? Trả lời ngắn.'}]}]})});
+    const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message);
+    say('m-model','Model hoạt động: '+j.candidates[0].content.parts[0].text.trim(),'ok');
+  }catch(e){say('m-model','Model này không dùng được: '+e.message,'err')}
+};
+$('btn-model').onclick=async()=>{
+  state.model=$('model').value;store.set('mb_model',state.model);
+  const{data}=await sb.auth.getSession();enter(data.session);
+};
+
+// ---- Bước 2: đăng nhập / đăng ký
+let mode='in';
+function setMode(m){mode=m;$('t-in').classList.toggle('on',m==='in');$('t-up').classList.toggle('on',m==='up');$('f-name').style.display=m==='up'?'block':'none';$('btn-auth').textContent=m==='in'?'Đăng nhập':'Tạo tài khoản';say('m-auth','')}
+$('t-in').onclick=()=>setMode('in');$('t-up').onclick=()=>setMode('up');
+$('btn-auth').onclick=async()=>{
+  const email=$('email').value.trim(),password=$('pass').value;
+  if(!email||password.length<6)return say('m-auth','Nhập email và mật khẩu từ 6 ký tự.','err');
+  say('m-auth','Đang xử lý...');
+  const res=mode==='in'?await sb.auth.signInWithPassword({email,password})
+    :await sb.auth.signUp({email,password,options:{data:{display_name:$('name').value.trim()||'Bạn học'}}});
+  if(res.error)return say('m-auth','Lỗi: '+res.error.message,'err');
+  if(!res.data.session)return say('m-auth','Đã tạo tài khoản. Hãy kiểm tra email để xác nhận rồi đăng nhập.','ok');
+  enter(res.data.session);
+};
+async function enter(session){
+  if(!session)return go('s-auth');
+  const{data}=await sb.from('profiles').select('display_name').eq('id',session.user.id).maybeSingle();
+  $('hello').textContent='Xin chào, '+((data&&data.display_name)||session.user.email.split('@')[0])+'!';
+  go('s-home');
+}
+$('btn-out').onclick=async()=>{await sb.auth.signOut();go('s-auth')};
+
+// ---- Khởi động: bỏ qua các bước đã hoàn thành
+(async()=>{
+  if(!state.key||!state.model)return;
+  const{data}=await sb.auth.getSession();
+  data.session?enter(data.session):go('s-auth');
+})();
+</script>
+<script src="buddy.js"></script>
+<script src="forum.js"></script>
+<script src="game.js"></script>
+<script src="review.js"></script>
+<script>$("open-rv").addEventListener("click",loadReview);$("g-rv").onclick=()=>{go("s-review");loadReview()};document.querySelectorAll("#s-games [data-topic],#s-play [data-go]").forEach(b=>{if(b.dataset.go)b.onclick=()=>go(b.dataset.go)})</script>
+<script>$("open-forum").addEventListener("click",loadForum)</script>
+</body>
+</html>
