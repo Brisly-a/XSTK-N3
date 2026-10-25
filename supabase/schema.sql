@@ -3,7 +3,7 @@
 -- An toàn khi chạy lại nhiều lần (idempotent).
 -- =====================================================================
 
--- 1) HỒ SƠ NGƯỜI DÙNG -------------------------------------------------
+-- 1) HỒ SƠ ------------------------------------------------------------
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   username text unique not null,
@@ -40,7 +40,7 @@ end $$;
 drop trigger if exists profiles_guard_t on public.profiles;
 create trigger profiles_guard_t before update on public.profiles for each row execute function public.profiles_guard();
 
--- 2) DIỄN ĐÀN ----------------------------------------------------------
+-- 2) DIỄN ĐÀN ---------------------------------------------------------
 create table if not exists public.posts (
   id bigint generated always as identity primary key,
   author_id uuid not null references public.profiles(id) on delete cascade,
@@ -104,7 +104,7 @@ begin
 drop trigger if exists hide_reported_t on public.post_reports;
 create trigger hide_reported_t after insert on public.post_reports for each row execute function public.hide_reported();
 
--- 3) BẠN BÈ & TIN NHẮN ---------------------------------------------------
+-- 3) BẠN BÈ & CHAT 1-1 ------------------------------------------------
 create table if not exists public.friendships (
   id bigint generated always as identity primary key,
   requester uuid not null references public.profiles(id) on delete cascade,
@@ -139,6 +139,7 @@ begin
     raise exception 'rate limit: nhắn quá nhanh'; end if; return new; end $$;
 drop trigger if exists rate_messages_t on public.messages;
 create trigger rate_messages_t before insert on public.messages for each row execute function public.rate_messages();
+
 
 -- 4) NHẬT KÝ HỌC TẬP (cho trang Ôn tập) ---------------------------------
 create table if not exists public.study_logs (
